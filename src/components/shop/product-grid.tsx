@@ -40,7 +40,7 @@ export function ProductGrid({ products }: ProductGridProps) {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       {products.map((product) => (
         <div key={product.id} className="group relative">
-          <Link href={`/shop/${product.category}/${product.id}`}>
+          <Link href={`/product/${product.id}`}>
             <div className="aspect-[4/5] bg-[#F5F5F5] relative overflow-hidden mb-4 border border-gray-100">
               <div className="absolute inset-0 bg-gray-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 mix-blend-multiply" />
               <Image
@@ -66,12 +66,14 @@ export function ProductGrid({ products }: ProductGridProps) {
             Quick Add
           </button>
 
-          <div className="flex justify-between items-start gap-2">
-            <h3 className="font-sans text-sm font-medium uppercase group-hover:underline decoration-1 underline-offset-4 leading-tight">
-              {product.name}
-            </h3>
-            <span className="font-mono text-sm text-gray-500 whitespace-nowrap">₹{product.price}</span>
-          </div>
+          <Link href={`/product/${product.id}`}>
+            <div className="flex justify-between items-start gap-2">
+              <h3 className="font-sans text-sm font-medium uppercase group-hover:underline decoration-1 underline-offset-4 leading-tight">
+                {product.name}
+              </h3>
+              <span className="font-mono text-sm text-gray-500 whitespace-nowrap">₹{product.price.toLocaleString()}</span>
+            </div>
+          </Link>
           <div className="flex gap-1 mt-2">
             {product.colors.slice(0, 3).map((color) => (
               <span key={color} className="text-xs font-mono text-gray-400">

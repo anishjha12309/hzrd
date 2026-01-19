@@ -2,67 +2,36 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { ArrowRight, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
 import { useCartStore } from "@/store/cart-store";
 import { toast } from "sonner";
-
-const PRODUCTS = [
-  {
-    id: 1,
-    name: "FOLDED TEE // WHITE",
-    price: 325,
-    image: "/images/white-tee.png",
-    color: "White",
-    size: "M",
-  },
-  {
-    id: 2,
-    name: "FOLDED HOODIE // BLACK",
-    price: 550,
-    image: "/images/black-hoodie.png",
-    color: "Black",
-    size: "L",
-  },
-  {
-    id: 3,
-    name: "FOLDED TEE // BEIGE",
-    price: 325,
-    image: "/images/beige-tee.png",
-    color: "Beige",
-    size: "M",
-  },
-  {
-    id: 4,
-    name: "FOLDED TEE // WHITE V2",
-    price: 325,
-    image: "/images/white-tee.png",
-    color: "White",
-    size: "L",
-  },
-  {
-    id: 5,
-    name: "FOLDED HOODIE // BLACK V2",
-    price: 550,
-    image: "/images/black-hoodie.png",
-    color: "Black",
-    size: "XL",
-  },
-];
+import Link from "next/link";
+import { PRODUCTS } from "@/lib/product-data";
 
 export function ProductCarousel() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" }, [
-    Autoplay({ delay: 4000, stopOnInteraction: false }),
+    Autoplay({ delay: 5000, stopOnInteraction: true }),
   ]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+  }, [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
-    emblaApi.on("select", () => {
-      setSelectedIndex(emblaApi.selectedScrollSnap());
-    });
-  }, [emblaApi]);
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+  }, [emblaApi, onSelect]);
 
   const handleQuickAdd = (product: typeof PRODUCTS[0]) => {
     addItem({
@@ -70,74 +39,110 @@ export function ProductCarousel() {
       name: product.name,
       price: product.price,
       image: product.image,
-      color: product.color,
-      size: product.size,
+      color: product.colors[0],
+      size: product.sizes[0],
     });
     toast.success(`${product.name} added to cart`, {
-      description: `Size: ${product.size} / Color: ${product.color}`,
+      description: `Size: ${product.sizes[0]} / Color: ${product.colors[0]}`,
     });
   };
 
+  // Get featured products for carousel
+  const carouselProducts = PRODUCTS.filter((p) => p.featured || p.category === "t-shirts").slice(0, 8);
+
   return (
-    <section className="py-24 border-b border-gray-100 bg-white">
-      <div className="container mx-auto px-4 md:px-8 mb-12 flex justify-between items-end">
-        <div>
-          <span className="font-mono text-xs text-gray-400 uppercase tracking-widest block mb-2">
-            The Archive
-          </span>
-          <h2 className="font-heading text-4xl uppercase tracking-tighter">Latest Arrivals</h2>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => emblaApi?.scrollPrev()}
-            className="p-3 border border-gray-100 hover:bg-black hover:text-white transition-colors"
-          >
-            <ArrowRight className="w-4 h-4 rotate-180" />
-          </button>
-          <button
-            onClick={() => emblaApi?.scrollNext()}
-            className="p-3 border border-gray-100 hover:bg-black hover:text-white transition-colors"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </button>
+    <section className="py-20 md:py-28 border-b border-gray-100 bg-white">
+      {/* Header with Navigation */}
+      <div className="container mx-auto px-4 md:px-8 mb-10">
+        <div className="flex justify-between items-end">
+          <div>
+            <span className="font-mono text-xs text-gray-400 uppercase tracking-widest block mb-2">
+              The Archive
+            </span>
+            <h2 className="font-heading text-3xl md:text-4xl uppercase tracking-tighter">
+              Latest Arrivals
+            </h2>
+          </div>
+          
+          {/* Navigation Arrows */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={scrollPrev}
+              className="w-10 h-10 flex items-center justify-center border border-gray-200 hover:border-black hover:bg-black hover:text-white transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Previous"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={scrollNext}
+              className="w-10 h-10 flex items-center justify-center border border-gray-200 hover:border-black hover:bg-black hover:text-white transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Next"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* Carousel */}
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex -ml-4">
-          {PRODUCTS.map((product) => (
-            <div key={product.id} className="flex-[0_0_80%] md:flex-[0_0_30%] min-w-0 pl-4">
-              <div className="group relative cursor-pointer">
-                <div className="aspect-[4/5] bg-brand-off relative overflow-hidden mb-4">
-                  <div className="absolute inset-0 bg-gray-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 mix-blend-multiply" />
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover mix-blend-multiply p-12 group-hover:scale-110 transition-transform duration-700 ease-out"
-                  />
-                  {/* Quick Add Button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleQuickAdd(product);
-                    }}
-                    className="absolute bottom-4 left-4 bg-white px-4 py-2 text-xs font-mono uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 translate-y-2 group-hover:translate-y-0 hover:bg-black hover:text-white flex items-center gap-2 border border-transparent hover:border-black"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Quick Add
-                  </button>
-                </div>
+        <div className="flex -ml-4 md:-ml-6">
+          {carouselProducts.map((product) => (
+            <div key={product.id} className="flex-[0_0_75%] sm:flex-[0_0_45%] md:flex-[0_0_30%] lg:flex-[0_0_25%] min-w-0 pl-4 md:pl-6">
+              <div className="group relative">
+                {/* Product Image */}
+                <Link href={`/product/${product.id}`}>
+                  <div className="aspect-[4/5] bg-[#F5F5F5] relative overflow-hidden mb-4 cursor-pointer">
+                    <div className="absolute inset-0 bg-gray-100/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover mix-blend-multiply p-8 md:p-10 group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                  </div>
+                </Link>
+                
+                {/* Quick Add Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleQuickAdd(product);
+                  }}
+                  className="absolute bottom-20 left-4 bg-white px-4 py-2.5 text-xs font-mono uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 translate-y-2 group-hover:translate-y-0 hover:bg-black hover:text-white flex items-center gap-2 shadow-sm"
+                >
+                  <Plus className="w-3 h-3" />
+                  Quick Add
+                </button>
 
-                <div className="flex justify-between items-start">
-                  <h3 className="font-sans text-sm font-medium uppercase group-hover:underline decoration-1 underline-offset-4">
-                    {product.name}
-                  </h3>
-                  <span className="font-mono text-sm text-gray-500">${product.price}</span>
-                </div>
+                {/* Product Info */}
+                <Link href={`/product/${product.id}`}>
+                  <div className="flex justify-between items-start cursor-pointer">
+                    <h3 className="font-sans text-sm font-medium uppercase group-hover:underline decoration-1 underline-offset-4 leading-tight max-w-[70%]">
+                      {product.name}
+                    </h3>
+                    <span className="font-mono text-sm">₹{product.price.toLocaleString()}</span>
+                  </div>
+                </Link>
+                
+                {/* Category Tag */}
+                <span className="font-mono text-[10px] text-gray-400 uppercase tracking-wide mt-1 block">
+                  {product.category.replace("-", " ")}
+                </span>
               </div>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* View All Link */}
+      <div className="container mx-auto px-4 md:px-8 mt-12 text-center">
+        <Link
+          href="/shop"
+          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest hover:underline underline-offset-4"
+        >
+          View All Products
+          <ChevronRight className="w-4 h-4" />
+        </Link>
       </div>
     </section>
   );
