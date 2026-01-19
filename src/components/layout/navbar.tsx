@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { SearchDrawer } from "@/components/search/search-drawer";
 import { MenuDrawer } from "@/components/menu/menu-drawer";
+import { WishlistDrawer } from "@/components/wishlist/wishlist-drawer";
 import { useState, useEffect } from "react";
 
 export function Navbar() {
@@ -31,11 +32,13 @@ export function Navbar() {
         </Link>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 md:gap-4">
             <SearchDrawer />
+            <WishlistDrawer />
             <CartDrawer />
         </div>
       </div>
     </nav>
   );
 }
+

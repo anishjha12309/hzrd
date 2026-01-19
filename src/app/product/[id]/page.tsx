@@ -4,12 +4,51 @@ import { useState, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import Head from "next/head";
 import { ChevronRight, Minus, Plus, Check, Ruler, Truck, RotateCcw, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProductById, getRelatedProducts, Product } from "@/lib/product-data";
 import { useCartStore } from "@/store/cart-store";
+import { useWishlistStore } from "@/store/wishlist-store";
 import { toast } from "sonner";
 import { Footer } from "@/components/layout/footer";
+import { SustainabilityBadge } from "@/components/product/sustainability-badge";
+import { CompleteTheLook } from "@/components/product/complete-the-look";
+
+// Product JSON-LD Schema
+function ProductSchema({ product }: { product: Product }) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: `https://hzrd.store${product.image}`,
+    brand: {
+      "@type": "Brand",
+      name: "HZRD",
+    },
+    offers: {
+      "@type": "Offer",
+      url: `https://hzrd.store/product/${product.id}`,
+      priceCurrency: "INR",
+      price: product.price,
+      availability: "https://schema.org/InStock",
+      seller: {
+        "@type": "Organization",
+        name: "HZRD",
+      },
+    },
+    category: product.category,
+    material: product.specs.material,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
 
 export default function ProductPage() {
   const params = useParams();
@@ -20,8 +59,9 @@ export default function ProductPage() {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"details" | "specs" | "care">("details");
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
+  const { toggleItem, isInWishlist } = useWishlistStore();
+  const [isWishlisted, setIsWishlisted] = useState(false);
 
   useEffect(() => {
     const p = getProductById(productId);
@@ -30,8 +70,11 @@ export default function ProductPage() {
       setSelectedColor(p.colors[0]);
       setSelectedSize(p.sizes[0]);
       setRelatedProducts(getRelatedProducts(p, 4));
+      setIsWishlisted(isInWishlist(p.id));
+      // Update document title
+      document.title = `${p.name} | HZRD`;
     }
-  }, [productId]);
+  }, [productId, isInWishlist]);
 
   if (!product) {
     return (
@@ -58,7 +101,9 @@ export default function ProductPage() {
   };
 
   return (
-    <main className="min-h-screen bg-white pt-24 md:pt-28">
+    <>
+      <ProductSchema product={product} />
+      <main className="min-h-screen bg-white pt-24 md:pt-28">
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 md:px-8 py-4">
         <nav className="flex items-center gap-2 font-mono text-xs text-gray-400 uppercase">
@@ -89,7 +134,22 @@ export default function ProductPage() {
               />
               {/* Wishlist Button */}
               <button
-                onClick={() => setIsWishlisted(!isWishlisted)}
+                onClick={() => {
+                  toggleItem({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    category: product.category,
+                  });
+                  const nowInWishlist = !isWishlisted;
+                  setIsWishlisted(nowInWishlist);
+                  if (nowInWishlist) {
+                    toast.success(`${product.name} added to wishlist`);
+                  } else {
+                    toast.success(`${product.name} removed from wishlist`);
+                  }
+                }}
                 className={`absolute top-4 right-4 w-10 h-10 flex items-center justify-center border transition-all ${
                   isWishlisted
                     ? "bg-black border-black text-white"
@@ -320,6 +380,18 @@ export default function ProductPage() {
                 </motion.div>
               </AnimatePresence>
             </div>
+
+            {/* Sustainability Section */}
+            <div className="mt-8">
+              <SustainabilityBadge sustainability={product.sustainability} />
+            </div>
+
+            {/* Complete the Look */}
+            {product.completeTheLook && product.completeTheLook.length > 0 && (
+              <div className="mt-8">
+                <CompleteTheLook product={product} />
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -355,5 +427,6 @@ export default function ProductPage() {
 
       <Footer />
     </main>
+    </>
   );
 }

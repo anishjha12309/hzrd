@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { CheckCircle, Package, Truck, Home, ArrowRight } from "lucide-react";
 import { Footer } from "@/components/layout/footer";
@@ -11,18 +11,24 @@ function OrderSuccessContent() {
   const orderId = searchParams.get("orderId");
   const paymentId = searchParams.get("paymentId");
 
-  // Generate mock order number
-  const orderNumber = `HZRD-${Date.now().toString(36).toUpperCase().slice(-8)}`;
-  
-  // Mock delivery date (5-7 days from now)
-  const deliveryDate = new Date();
-  deliveryDate.setDate(deliveryDate.getDate() + 6);
-  const formattedDeliveryDate = deliveryDate.toLocaleDateString("en-IN", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  // Use state to avoid hydration mismatch
+  const [orderNumber, setOrderNumber] = useState("HZRD-XXXXXXXX");
+  const [formattedDeliveryDate, setFormattedDeliveryDate] = useState("Loading...");
+
+  useEffect(() => {
+    // Generate order number on client only
+    setOrderNumber(`HZRD-${Date.now().toString(36).toUpperCase().slice(-8)}`);
+    
+    // Calculate delivery date on client only
+    const deliveryDate = new Date();
+    deliveryDate.setDate(deliveryDate.getDate() + 6);
+    setFormattedDeliveryDate(deliveryDate.toLocaleDateString("en-IN", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }));
+  }, []);
 
   const steps = [
     {

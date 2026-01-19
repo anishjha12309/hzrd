@@ -1,8 +1,24 @@
+import { Metadata } from "next";
 import { Footer } from "@/components/layout/footer";
 
-export const metadata = {
-  title: "About | HZRD",
-  description: "HZRD - Defining the grey area between black and white. Industrial manufacturing meets luxury streetwear.",
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "HZRD - Defining the grey area between black and white. Premium streetwear brand from Delhi, India. Industrial manufacturing meets luxury fashion.",
+  keywords: [
+    "HZRD brand",
+    "streetwear brand India",
+    "Delhi fashion brand",
+    "premium streetwear",
+    "brutalist fashion",
+  ],
+  openGraph: {
+    title: "About HZRD",
+    description: "Industrial manufacturing meets luxury streetwear.",
+  },
+  alternates: {
+    canonical: "https://hzrd.store/about",
+  },
 };
 
 export default function AboutPage() {

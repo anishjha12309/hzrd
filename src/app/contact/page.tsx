@@ -1,8 +1,23 @@
+import { Metadata } from "next";
 import { Footer } from "@/components/layout/footer";
 
-export const metadata = {
-  title: "Contact | HZRD",
-  description: "Get in touch with HZRD. Customer support, wholesale inquiries, and collaborations.",
+export const metadata: Metadata = {
+  title: "Contact",
+  description:
+    "Get in touch with HZRD. Customer support, wholesale inquiries, press, and collaborations. Based in Delhi, India.",
+  keywords: [
+    "contact HZRD",
+    "streetwear customer support",
+    "wholesale inquiry",
+    "fashion collaboration",
+  ],
+  openGraph: {
+    title: "Contact | HZRD",
+    description: "Get in touch with our team.",
+  },
+  alternates: {
+    canonical: "https://hzrd.store/contact",
+  },
 };
 
 export default function ContactPage() {

@@ -17,7 +17,7 @@ declare global {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, getTotalPrice, clearCart } = useCartStore();
+  const { items, getSubtotal, getDiscount, getShipping, getTotal, clearCart } = useCartStore();
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -30,9 +30,10 @@ export default function CheckoutPage() {
     pincode: "",
   });
 
-  const subtotal = getTotalPrice();
-  const shipping = subtotal > 1500 ? 0 : 99;
-  const total = subtotal + shipping;
+  const subtotal = getSubtotal();
+  const discount = getDiscount();
+  const shipping = getShipping();
+  const total = getTotal();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

@@ -2,9 +2,10 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Heart } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { useCartStore } from "@/store/cart-store";
+import { useWishlistStore } from "@/store/wishlist-store";
 import { toast } from "sonner";
 import Link from "next/link";
 import { PRODUCTS } from "@/lib/product-data";
@@ -15,7 +16,13 @@ export function ProductCarousel() {
   ]);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
+  const { toggleItem, isInWishlist } = useWishlistStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -45,6 +52,22 @@ export function ProductCarousel() {
     toast.success(`${product.name} added to cart`, {
       description: `Size: ${product.sizes[0]} / Color: ${product.colors[0]}`,
     });
+  };
+
+  const handleWishlistToggle = (product: typeof PRODUCTS[0]) => {
+    const wasInWishlist = isInWishlist(product.id);
+    toggleItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+    });
+    if (wasInWishlist) {
+      toast.success(`${product.name} removed from wishlist`);
+    } else {
+      toast.success(`${product.name} added to wishlist`);
+    }
   };
 
   // Get featured products for carousel
@@ -87,50 +110,71 @@ export function ProductCarousel() {
       {/* Carousel */}
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex -ml-4 md:-ml-6">
-          {carouselProducts.map((product) => (
-            <div key={product.id} className="flex-[0_0_75%] sm:flex-[0_0_45%] md:flex-[0_0_30%] lg:flex-[0_0_25%] min-w-0 pl-4 md:pl-6">
-              <div className="group relative">
-                {/* Product Image */}
-                <Link href={`/product/${product.id}`}>
-                  <div className="aspect-[4/5] bg-[#F5F5F5] relative overflow-hidden mb-4 cursor-pointer">
-                    <div className="absolute inset-0 bg-gray-100/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover mix-blend-multiply p-8 md:p-10 group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                  </div>
-                </Link>
-                
-                {/* Quick Add Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleQuickAdd(product);
-                  }}
-                  className="absolute bottom-20 left-4 bg-white px-4 py-2.5 text-xs font-mono uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 translate-y-2 group-hover:translate-y-0 hover:bg-black hover:text-white flex items-center gap-2 shadow-sm"
-                >
-                  <Plus className="w-3 h-3" />
-                  Quick Add
-                </button>
+          {carouselProducts.map((product) => {
+            const inWishlist = mounted && isInWishlist(product.id);
+            return (
+              <div key={product.id} className="flex-[0_0_75%] sm:flex-[0_0_45%] md:flex-[0_0_30%] lg:flex-[0_0_25%] min-w-0 pl-4 md:pl-6">
+                <div className="group relative">
+                  {/* Product Image */}
+                  <Link href={`/product/${product.id}`}>
+                    <div className="aspect-[4/5] bg-[#F5F5F5] relative overflow-hidden mb-4 cursor-pointer">
+                      <div className="absolute inset-0 bg-gray-100/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover mix-blend-multiply p-8 md:p-10 group-hover:scale-105 transition-transform duration-700 ease-out"
+                      />
+                    </div>
+                  </Link>
+                  
+                  {/* Hover Actions */}
+                  <div className="absolute bottom-20 left-4 right-4 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 translate-y-2 group-hover:translate-y-0">
+                    {/* Quick Add Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleQuickAdd(product);
+                      }}
+                      className="bg-white px-4 py-2.5 text-xs font-mono uppercase hover:bg-black hover:text-white flex items-center gap-2 shadow-sm transition-colors"
+                    >
+                      <Plus className="w-3 h-3" />
+                      Quick Add
+                    </button>
 
-                {/* Product Info */}
-                <Link href={`/product/${product.id}`}>
-                  <div className="flex justify-between items-start cursor-pointer">
-                    <h3 className="font-sans text-sm font-medium uppercase group-hover:underline decoration-1 underline-offset-4 leading-tight max-w-[70%]">
-                      {product.name}
-                    </h3>
-                    <span className="font-mono text-sm">₹{product.price.toLocaleString()}</span>
+                    {/* Wishlist Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleWishlistToggle(product);
+                      }}
+                      className={`w-9 h-9 flex items-center justify-center border shadow-sm transition-all ${
+                        inWishlist
+                          ? "bg-black border-black text-white"
+                          : "bg-white border-gray-200 hover:border-black"
+                      }`}
+                    >
+                      <Heart className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`} />
+                    </button>
                   </div>
-                </Link>
-                
-                {/* Category Tag */}
-                <span className="font-mono text-[10px] text-gray-400 uppercase tracking-wide mt-1 block">
-                  {product.category.replace("-", " ")}
-                </span>
+
+                  {/* Product Info */}
+                  <Link href={`/product/${product.id}`}>
+                    <div className="flex justify-between items-start cursor-pointer">
+                      <h3 className="font-sans text-sm font-medium uppercase group-hover:underline decoration-1 underline-offset-4 leading-tight max-w-[70%]">
+                        {product.name}
+                      </h3>
+                      <span className="font-mono text-sm">₹{product.price.toLocaleString()}</span>
+                    </div>
+                  </Link>
+                  
+                  {/* Category Tag */}
+                  <span className="font-mono text-[10px] text-gray-400 uppercase tracking-wide mt-1 block">
+                    {product.category.replace("-", " ")}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

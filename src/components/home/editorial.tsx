@@ -50,15 +50,15 @@ export function Editorial() {
                     className="object-cover group-hover:scale-110 transition-all duration-700" 
                  />
               </div>
-              <div className="relative flex flex-col items-center justify-center p-6 bg-red-600 text-black group hover:bg-white transition-colors cursor-pointer">
+              <a href="/about" className="relative flex flex-col items-center justify-center p-6 bg-red-600 text-black group hover:bg-white transition-colors cursor-pointer">
                   <div className="text-center">
                      <div className="text-2xl md:text-4xl font-heading font-black mb-1 uppercase">Urban</div>
                      <div className="text-2xl md:text-4xl font-heading font-black text-transparent" style={{ WebkitTextStroke: '1px black' }}>Uniform</div>
                   </div>
                   <div className="mt-4 font-mono text-xs uppercase tracking-widest border-b border-black group-hover:border-black/50 pb-1">
-                     View Lookbook
+                     Our Story
                   </div>
-              </div>
+              </a>
            </div>
         </div>
      </section>

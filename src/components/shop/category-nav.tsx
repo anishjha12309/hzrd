@@ -7,12 +7,12 @@ interface CategoryNavProps {
 
 export function CategoryNav({ activeCategory = "all" }: CategoryNavProps) {
   return (
-    <nav className="flex gap-6 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+    <nav className="flex gap-6 md:gap-8 border-b border-gray-200 mb-8">
       <Link
         href="/shop"
-        className={`font-mono text-xs uppercase tracking-widest whitespace-nowrap transition-colors ${
+        className={`font-mono text-xs uppercase tracking-widest whitespace-nowrap transition-colors pb-3 -mb-[1px] ${
           activeCategory === "all"
-            ? "text-black underline underline-offset-4"
+            ? "text-black border-b-2 border-black"
             : "text-gray-400 hover:text-black"
         }`}
       >
@@ -22,9 +22,9 @@ export function CategoryNav({ activeCategory = "all" }: CategoryNavProps) {
         <Link
           key={cat.slug}
           href={`/shop/${cat.slug}`}
-          className={`font-mono text-xs uppercase tracking-widest whitespace-nowrap transition-colors ${
+          className={`font-mono text-xs uppercase tracking-widest whitespace-nowrap transition-colors pb-3 -mb-[1px] ${
             activeCategory === cat.slug
-              ? "text-black underline underline-offset-4"
+              ? "text-black border-b-2 border-black"
               : "text-gray-400 hover:text-black"
           }`}
         >

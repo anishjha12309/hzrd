@@ -1,8 +1,24 @@
+import { Metadata } from "next";
 import { Footer } from "@/components/layout/footer";
 
-export const metadata = {
-  title: "Size Guide | HZRD",
-  description: "Find your perfect fit. HZRD size guide for all apparel and accessories.",
+export const metadata: Metadata = {
+  title: "Size Guide",
+  description:
+    "Find your perfect fit with the HZRD size guide. Measurements for t-shirts, hoodies, pants, and rings. Oversized fit sizing tips.",
+  keywords: [
+    "streetwear size guide",
+    "oversized fit sizing",
+    "ring size chart",
+    "clothing measurements",
+    "how to measure",
+  ],
+  openGraph: {
+    title: "Size Guide | HZRD",
+    description: "Find your perfect fit. Complete sizing guide.",
+  },
+  alternates: {
+    canonical: "https://hzrd.store/size-guide",
+  },
 };
 
 export default function SizeGuidePage() {

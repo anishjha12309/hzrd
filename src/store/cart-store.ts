@@ -28,7 +28,10 @@ interface CartStore {
   
   // Computed
   getTotalItems: () => number;
-  getTotalPrice: () => number;
+  getSubtotal: () => number;
+  getDiscount: () => number;
+  getShipping: () => number;
+  getTotal: () => number;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -95,11 +98,36 @@ export const useCartStore = create<CartStore>()(
         return get().items.reduce((total, item) => total + item.quantity, 0);
       },
 
-      getTotalPrice: () => {
+      getSubtotal: () => {
         return get().items.reduce(
           (total, item) => total + item.price * item.quantity,
           0
         );
+      },
+
+      getDiscount: () => {
+        const subtotal = get().getSubtotal();
+        // ₹300 off on orders ≥ ₹3000
+        if (subtotal >= 3000) {
+          return 300;
+        }
+        return 0;
+      },
+
+      getShipping: () => {
+        const subtotal = get().getSubtotal();
+        // Free delivery for orders ≥ ₹1000, else ₹110
+        if (subtotal >= 1000) {
+          return 0;
+        }
+        return 110;
+      },
+
+      getTotal: () => {
+        const subtotal = get().getSubtotal();
+        const discount = get().getDiscount();
+        const shipping = get().getShipping();
+        return subtotal - discount + shipping;
       },
     }),
     {

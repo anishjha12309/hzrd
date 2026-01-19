@@ -9,14 +9,17 @@ import { toast } from "sonner";
 import Link from "next/link";
 
 export function CartDrawer() {
-  const { items, isOpen, openCart, closeCart, removeItem, updateQuantity, getTotalPrice, getTotalItems } = useCartStore();
+  const { items, isOpen, openCart, closeCart, removeItem, updateQuantity, getSubtotal, getDiscount, getShipping, getTotal, getTotalItems } = useCartStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const totalPrice = getTotalPrice();
+  const subtotal = getSubtotal();
+  const discount = getDiscount();
+  const shipping = getShipping();
+  const total = getTotal();
   const totalItems = mounted ? getTotalItems() : 0;
 
   const handleRemove = (id: number, name: string) => {
@@ -125,10 +128,57 @@ export function CartDrawer() {
             {/* Footer - Only show if items exist */}
             {items.length > 0 && (
               <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 bg-white pb-8">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="font-heading uppercase text-xl">Total</span>
-                  <span className="font-mono text-lg">₹{totalPrice.toLocaleString()}</span>
+                {/* Shipping/Discount Info Banner */}
+                {subtotal < 1000 && (
+                  <div className="bg-gray-50 border border-gray-200 p-3 mb-4 text-center">
+                    <p className="font-mono text-xs text-gray-600">
+                      Add <span className="font-bold text-black">₹{(1000 - subtotal).toLocaleString()}</span> more for FREE DELIVERY
+                    </p>
+                  </div>
+                )}
+                {subtotal >= 1000 && subtotal < 3000 && (
+                  <div className="bg-gray-50 border border-gray-200 p-3 mb-4 text-center">
+                    <p className="font-mono text-xs text-gray-600">
+                      ✓ Free Delivery! Add <span className="font-bold text-black">₹{(3000 - subtotal).toLocaleString()}</span> more for ₹300 OFF
+                    </p>
+                  </div>
+                )}
+                {subtotal >= 3000 && (
+                  <div className="bg-black text-white p-3 mb-4 text-center">
+                    <p className="font-mono text-xs uppercase tracking-wide">
+                      ✓ Free Delivery + ₹300 Off Applied!
+                    </p>
+                  </div>
+                )}
+
+                {/* Pricing Breakdown */}
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-mono text-xs text-gray-500 uppercase">Subtotal</span>
+                    <span className="font-mono text-sm">₹{subtotal.toLocaleString()}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between items-center text-green-600">
+                      <span className="font-mono text-xs uppercase">Discount</span>
+                      <span className="font-mono text-sm">-₹{discount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center">
+                    <span className="font-mono text-xs text-gray-500 uppercase">Delivery</span>
+                    <span className="font-mono text-sm">
+                      {shipping === 0 ? (
+                        <span className="text-green-600">FREE</span>
+                      ) : (
+                        `₹${shipping.toLocaleString()}`
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center border-t border-gray-200 pt-2 mt-2">
+                    <span className="font-heading uppercase text-lg">Total</span>
+                    <span className="font-mono text-lg font-bold">₹{total.toLocaleString()}</span>
+                  </div>
                 </div>
+
                 <Link href="/checkout" onClick={closeCart}>
                   <Button className="w-full h-12 bg-black text-white hover:bg-gray-900 rounded-none uppercase tracking-widest font-heading text-lg">
                     Checkout

@@ -1,0 +1,14 @@
+# robots.txt for HZRD Store
+# https://hzrd.store
+
+User-agent: *
+Allow: /
+
+# Disallow admin/private paths
+Disallow: /api/
+Disallow: /_next/
+Disallow: /checkout
+Disallow: /order-success
+
+# Sitemap
+Sitemap: https://hzrd.store/sitemap.xml

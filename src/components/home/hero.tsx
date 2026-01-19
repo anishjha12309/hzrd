@@ -78,12 +78,16 @@ export function Hero() {
                 Defining the grey area between black and white as the color Off-White. Industrial manufacturing meets luxury streetwear.
             </p>
             <div className="mt-8 flex gap-4">
-                <Button className="rounded-none bg-black text-white px-8 py-6 uppercase tracking-widest text-sm hover:bg-gray-800 transition-all font-heading">
-                    Shop Syntax
-                </Button>
-                <Button variant="outline" className="rounded-none border-black hover:bg-black hover:text-white px-8 py-6 uppercase tracking-widest text-sm transition-all font-heading">
-                    View Lookbook
-                </Button>
+                <a href="/shop">
+                  <Button className="rounded-none bg-black text-white px-8 py-6 uppercase tracking-widest text-sm hover:bg-gray-800 transition-all font-heading">
+                      Shop Now
+                  </Button>
+                </a>
+                <a href="/about">
+                  <Button variant="outline" className="rounded-none border-black hover:bg-black hover:text-white px-8 py-6 uppercase tracking-widest text-sm transition-all font-heading">
+                      Our Story
+                  </Button>
+                </a>
             </div>
         </div>
 
@@ -110,13 +114,8 @@ export function Hero() {
                   Add to Bag
                 </button>
                 
-                {/* Floating Tags */}
-                <div className="absolute -right-4 top-10 bg-white border border-gray-200 p-2 shadow-sm rotate-12">
-                    <ArrowDownRight className="w-4 h-4" />
-                </div>
-                <div className="absolute -left-4 bottom-10 bg-black text-white px-3 py-1 font-mono text-xs -rotate-6">
-                    "TEE"
-                </div>
+               
+             
             </div>
         </div>
 

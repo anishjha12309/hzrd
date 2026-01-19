@@ -1,8 +1,24 @@
+import { Metadata } from "next";
 import { Footer } from "@/components/layout/footer";
 
-export const metadata = {
-  title: "Shipping & Returns | HZRD",
-  description: "HZRD shipping information, delivery times, and return policy.",
+export const metadata: Metadata = {
+  title: "Shipping & Returns",
+  description:
+    "HZRD shipping information and return policy. Free shipping above ₹1500, 14-day returns, worldwide delivery. Fast shipping across India.",
+  keywords: [
+    "HZRD shipping",
+    "streetwear delivery India",
+    "return policy",
+    "free shipping",
+    "exchange policy",
+  ],
+  openGraph: {
+    title: "Shipping & Returns | HZRD",
+    description: "Free shipping above ₹1500. 14-day easy returns.",
+  },
+  alternates: {
+    canonical: "https://hzrd.store/shipping",
+  },
 };
 
 export default function ShippingPage() {

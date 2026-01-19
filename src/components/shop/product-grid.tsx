@@ -1,11 +1,13 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/lib/product-data";
 import { useCartStore } from "@/store/cart-store";
+import { useWishlistStore } from "@/store/wishlist-store";
 import { toast } from "sonner";
+import { useState, useEffect } from "react";
 
 interface ProductGridProps {
   products: Product[];
@@ -13,6 +15,12 @@ interface ProductGridProps {
 
 export function ProductGrid({ products }: ProductGridProps) {
   const addItem = useCartStore((state) => state.addItem);
+  const { toggleItem, isInWishlist } = useWishlistStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleQuickAdd = (product: Product) => {
     addItem({
@@ -28,6 +36,22 @@ export function ProductGrid({ products }: ProductGridProps) {
     });
   };
 
+  const handleWishlistToggle = (product: Product) => {
+    const wasInWishlist = isInWishlist(product.id);
+    toggleItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+    });
+    if (wasInWishlist) {
+      toast.success(`${product.name} removed from wishlist`);
+    } else {
+      toast.success(`${product.name} added to wishlist`);
+    }
+  };
+
   if (products.length === 0) {
     return (
       <div className="text-center py-24">
@@ -38,51 +62,69 @@ export function ProductGrid({ products }: ProductGridProps) {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-      {products.map((product) => (
-        <div key={product.id} className="group relative">
-          <Link href={`/product/${product.id}`}>
-            <div className="aspect-[4/5] bg-[#F5F5F5] relative overflow-hidden mb-4 border border-gray-100">
-              <div className="absolute inset-0 bg-gray-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 mix-blend-multiply" />
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                className="object-cover mix-blend-multiply p-8 group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-              {product.featured && (
-                <span className="absolute top-4 left-4 bg-black text-white px-3 py-1 font-mono text-xs uppercase z-20">
-                  Featured
-                </span>
-              )}
-            </div>
-          </Link>
-          
-          {/* Quick Add Button */}
-          <button
-            onClick={() => handleQuickAdd(product)}
-            className="absolute bottom-20 left-4 bg-white px-4 py-2 text-xs font-mono uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 translate-y-2 group-hover:translate-y-0 hover:bg-black hover:text-white flex items-center gap-2 border border-transparent hover:border-black"
-          >
-            <Plus className="w-3 h-3" />
-            Quick Add
-          </button>
+      {products.map((product) => {
+        const inWishlist = mounted && isInWishlist(product.id);
+        return (
+          <div key={product.id} className="group relative">
+            <Link href={`/product/${product.id}`}>
+              <div className="aspect-[4/5] bg-[#F5F5F5] relative overflow-hidden mb-4 border border-gray-100">
+                <div className="absolute inset-0 bg-gray-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 mix-blend-multiply" />
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  className="object-cover mix-blend-multiply p-8 group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                {product.featured && (
+                  <span className="absolute top-4 left-4 bg-black text-white px-3 py-1 font-mono text-xs uppercase z-20">
+                    Featured
+                  </span>
+                )}
+              </div>
+            </Link>
+            
+            {/* Hover Actions */}
+            <div className="absolute bottom-20 left-4 right-4 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 translate-y-2 group-hover:translate-y-0">
+              {/* Quick Add Button */}
+              <button
+                onClick={() => handleQuickAdd(product)}
+                className="bg-white px-4 py-2 text-xs font-mono uppercase hover:bg-black hover:text-white flex items-center gap-2 border border-transparent hover:border-black transition-colors"
+              >
+                <Plus className="w-3 h-3" />
+                Quick Add
+              </button>
 
-          <Link href={`/product/${product.id}`}>
-            <div className="flex justify-between items-start gap-2">
-              <h3 className="font-sans text-sm font-medium uppercase group-hover:underline decoration-1 underline-offset-4 leading-tight">
-                {product.name}
-              </h3>
-              <span className="font-mono text-sm text-gray-500 whitespace-nowrap">₹{product.price.toLocaleString()}</span>
+              {/* Wishlist Button */}
+              <button
+                onClick={() => handleWishlistToggle(product)}
+                className={`w-9 h-9 flex items-center justify-center border transition-all ${
+                  inWishlist
+                    ? "bg-black border-black text-white"
+                    : "bg-white border-gray-200 hover:border-black"
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`} />
+              </button>
             </div>
-          </Link>
-          <div className="flex gap-1 mt-2">
-            {product.colors.slice(0, 3).map((color) => (
-              <span key={color} className="text-xs font-mono text-gray-400">
-                {color}
-              </span>
-            ))}
+
+            <Link href={`/product/${product.id}`}>
+              <div className="flex justify-between items-start gap-2">
+                <h3 className="font-sans text-sm font-medium uppercase group-hover:underline decoration-1 underline-offset-4 leading-tight">
+                  {product.name}
+                </h3>
+                <span className="font-mono text-sm text-gray-500 whitespace-nowrap">₹{product.price.toLocaleString()}</span>
+              </div>
+            </Link>
+            <div className="flex gap-1 mt-2">
+              {product.colors.slice(0, 3).map((color) => (
+                <span key={color} className="text-xs font-mono text-gray-400">
+                  {color}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

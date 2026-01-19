@@ -1,6 +1,15 @@
 // Product data store for HZRD store
 export type ProductCategory = "t-shirts" | "hoodies" | "pants" | "accessories";
 
+export interface SustainabilityInfo {
+  score: number; // 1-100
+  carbonFootprint: string;
+  waterUsage: string;
+  certifications: string[];
+  recyclablePackaging: boolean;
+  madeLocally: boolean;
+}
+
 export interface ProductSpecs {
   gsm?: number;
   material?: string;
@@ -21,8 +30,40 @@ export interface Product {
   sizes: string[];
   description: string;
   specs: ProductSpecs;
+  sustainability: SustainabilityInfo;
+  completeTheLook?: number[]; // Product IDs that pair well
   featured?: boolean;
 }
+
+// Default sustainability for organic cotton products
+const ORGANIC_COTTON_SUSTAINABILITY: SustainabilityInfo = {
+  score: 85,
+  carbonFootprint: "2.1 kg CO₂",
+  waterUsage: "1,200L (70% less than conventional)",
+  certifications: ["GOTS Certified", "OEKO-TEX Standard 100"],
+  recyclablePackaging: true,
+  madeLocally: true,
+};
+
+// Default sustainability for blended products
+const BLENDED_SUSTAINABILITY: SustainabilityInfo = {
+  score: 72,
+  carbonFootprint: "3.4 kg CO₂",
+  waterUsage: "2,100L",
+  certifications: ["OEKO-TEX Standard 100"],
+  recyclablePackaging: true,
+  madeLocally: true,
+};
+
+// Sustainability for accessories
+const ACCESSORY_SUSTAINABILITY: SustainabilityInfo = {
+  score: 78,
+  carbonFootprint: "0.8 kg CO₂",
+  waterUsage: "150L",
+  certifications: ["Lead-Free", "Nickel-Free"],
+  recyclablePackaging: true,
+  madeLocally: true,
+};
 
 export const PRODUCTS: Product[] = [
   // T-Shirts
@@ -43,6 +84,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["Screen printed graphics", "Ribbed crew neck", "Double-stitched hems"],
     },
+    sustainability: { ...ORGANIC_COTTON_SUSTAINABILITY, score: 88 },
+    completeTheLook: [10, 15, 19],
     featured: true,
   },
   {
@@ -62,6 +105,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["Garment dyed", "Soft hand feel", "Minimal branding"],
     },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [9, 16, 12],
   },
   {
     id: 3,
@@ -80,6 +125,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["Premium Supima cotton", "Reinforced collar", "Side-seam construction"],
     },
+    sustainability: { ...ORGANIC_COTTON_SUSTAINABILITY, score: 90 },
+    completeTheLook: [11, 15, 17],
     featured: true,
   },
   {
@@ -99,6 +146,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["Embroidered logo", "Stretch fabric", "Dropped shoulders"],
     },
+    sustainability: BLENDED_SUSTAINABILITY,
+    completeTheLook: [10, 16, 18],
   },
   {
     id: 5,
@@ -117,6 +166,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["Natural dye", "Eco-friendly", "Soft finish"],
     },
+    sustainability: { ...ORGANIC_COTTON_SUSTAINABILITY, score: 92 },
+    completeTheLook: [9, 12, 17],
   },
 
   // Hoodies
@@ -137,6 +188,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["Brushed fleece interior", "Metal-tipped drawcords", "Ribbed cuffs and hem", "Kangaroo pocket"],
     },
+    sustainability: BLENDED_SUSTAINABILITY,
+    completeTheLook: [10, 15, 19],
     featured: true,
   },
   {
@@ -156,6 +209,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["Double-layered hood", "Metal eyelets", "Reinforced stitching"],
     },
+    sustainability: BLENDED_SUSTAINABILITY,
+    completeTheLook: [11, 12, 16],
   },
   {
     id: 8,
@@ -174,6 +229,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["YKK metal zipper", "Split kangaroo pockets", "Adjustable hood", "Metal aglets"],
     },
+    sustainability: BLENDED_SUSTAINABILITY,
+    completeTheLook: [10, 17, 18],
   },
 
   // Pants
@@ -194,6 +251,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["6 utility pockets", "Adjustable waist tabs", "Reinforced knees", "Snap button closures"],
     },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [2, 5, 15],
     featured: true,
   },
   {
@@ -213,6 +272,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["Zipper pockets", "Elastic waistband", "Ribbed ankles", "Reflective details"],
     },
+    sustainability: BLENDED_SUSTAINABILITY,
+    completeTheLook: [1, 6, 18],
   },
   {
     id: 11,
@@ -231,6 +292,8 @@ export const PRODUCTS: Product[] = [
       origin: "Made in India",
       features: ["Contrast stitching", "Heavy-duty hardware", "6 pockets"],
     },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [3, 7, 16],
   },
 
   // Accessories
@@ -247,21 +310,9 @@ export const PRODUCTS: Product[] = [
       material: "316L Stainless Steel",
       features: ["Hypoallergenic", "Tarnish resistant", "Polished finish", "8mm band width"],
     },
+    sustainability: ACCESSORY_SUSTAINABILITY,
+    completeTheLook: [1, 7, 10],
     featured: true,
-  },
-  {
-    id: 13,
-    name: "CUBAN CHAIN // GOLD",
-    price: 1399,
-    image: "/images/gold_chain_necklace_1768837576354.png",
-    category: "accessories",
-    colors: ["Gold"],
-    sizes: ["18\"", "20\"", "22\""],
-    description: "Thick Cuban link chain with secure clasp. 18k gold plated for lasting shine.",
-    specs: {
-      material: "Stainless Steel, 18K Gold Plated",
-      features: ["10mm link width", "Lobster clasp", "Tarnish resistant", "3-layer gold plating"],
-    },
   },
   {
     id: 14,
@@ -277,6 +328,126 @@ export const PRODUCTS: Product[] = [
       fit: "Adjustable Snapback",
       features: ["Embroidered logo", "Curved brim", "Breathable eyelets", "Adjustable snap closure"],
     },
+    sustainability: { ...ACCESSORY_SUSTAINABILITY, score: 82 },
+    completeTheLook: [1, 6, 10],
+  },
+
+  // NEW PRODUCTS - Sweatshirts
+  {
+    id: 15,
+    name: "CREWNECK SWEAT // CHARCOAL",
+    price: 2799,
+    image: "/images/oversized_sweatshirt_grey.png",
+    category: "hoodies",
+    colors: ["Charcoal", "Cream"],
+    sizes: ["S", "M", "L", "XL"],
+    description: "Classic crewneck silhouette in premium heavyweight fleece. Clean lines, no distractions.",
+    specs: {
+      gsm: 380,
+      material: "85% Cotton, 15% Polyester",
+      fit: "Oversized",
+      care: ["Machine wash cold", "Tumble dry low", "Do not bleach"],
+      origin: "Made in India",
+      features: ["Brushed fleece interior", "Ribbed trims", "Side-seam construction"],
+    },
+    sustainability: BLENDED_SUSTAINABILITY,
+    completeTheLook: [9, 12, 14],
+  },
+
+  // NEW - Wide Leg Pants
+  {
+    id: 16,
+    name: "WIDE LEG PANT // VOID",
+    price: 2699,
+    image: "/images/wide_leg_pants_black.png",
+    category: "pants",
+    colors: ["Black"],
+    sizes: ["28", "30", "32", "34", "36"],
+    description: "Ultra-wide silhouette with high waist. Maximum movement, maximum statement.",
+    specs: {
+      gsm: 290,
+      material: "100% Cotton Twill",
+      fit: "Wide Leg / High Waist",
+      care: ["Machine wash cold", "Hang dry", "Iron medium"],
+      origin: "Made in India",
+      features: ["Wide leg cut", "High waist", "Belt loops", "Back patch pockets"],
+    },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [2, 4, 12],
+  },
+
+  // NEW - Bucket Hat
+  {
+    id: 17,
+    name: "BUCKET HAT // VOID",
+    price: 899,
+    image: "/images/bucket_hat_black.png",
+    category: "accessories",
+    colors: ["Black"],
+    sizes: ["S/M", "L/XL"],
+    description: "Classic bucket silhouette with embroidered logo. Essential outdoor piece.",
+    specs: {
+      material: "100% Cotton Twill",
+      fit: "Regular",
+      features: ["Embroidered logo", "Stitched brim", "Breathable", "Packable"],
+    },
+    sustainability: { ...ACCESSORY_SUSTAINABILITY, score: 86 },
+    completeTheLook: [3, 5, 9],
+  },
+
+  // NEW - Crossbody Bag
+  {
+    id: 18,
+    name: "TECH SLING // VOID",
+    price: 1499,
+    image: "/images/crossbody_bag_black.png",
+    category: "accessories",
+    colors: ["Black"],
+    sizes: ["One Size"],
+    description: "Technical crossbody with multiple compartments. Urban utility essential.",
+    specs: {
+      material: "Recycled Nylon, YKK Zippers",
+      features: ["Multiple compartments", "Adjustable strap", "Water resistant", "Reflective accents"],
+    },
+    sustainability: { ...ACCESSORY_SUSTAINABILITY, score: 88, certifications: ["Made from Recycled Materials", "PFC-Free"] },
+    completeTheLook: [4, 8, 10],
+  },
+
+  // NEW - Socks
+  {
+    id: 19,
+    name: "ESSENTIAL SOCKS // WHITE",
+    price: 399,
+    image: "/images/socks_pack_white.png",
+    category: "accessories",
+    colors: ["White", "Black"],
+    sizes: ["7-10", "10-13"],
+    description: "Premium ribbed crew socks. Comfort and durability in every step.",
+    specs: {
+      material: "80% Cotton, 18% Polyester, 2% Spandex",
+      features: ["Ribbed texture", "Cushioned sole", "Arch support", "Seamless toe"],
+    },
+    sustainability: { ...ACCESSORY_SUSTAINABILITY, score: 75 },
+    completeTheLook: [1, 6, 10],
+  },
+
+  // NEW - Beanie
+  {
+    id: 20,
+    name: "RIBBED BEANIE // VOID",
+    price: 699,
+    image: "/images/beanie_black.png",
+    category: "accessories",
+    colors: ["Black", "Grey", "Cream"],
+    sizes: ["One Size"],
+    description: "Soft ribbed knit beanie for cold weather. Fitted with fold-over cuff.",
+    specs: {
+      material: "100% Acrylic Knit",
+      fit: "Fitted / Fold-over Cuff",
+      features: ["Ribbed knit", "Soft interior", "Stretchable", "Unisex"],
+    },
+    sustainability: { ...ACCESSORY_SUSTAINABILITY, score: 70 },
+    completeTheLook: [7, 8, 16],
   },
 ];
 
@@ -294,6 +465,21 @@ export function getProductById(id: number): Product | undefined {
 
 export function getRelatedProducts(product: Product, limit = 4): Product[] {
   return PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, limit);
+}
+
+export function getCompleteTheLook(product: Product): Product[] {
+  if (!product.completeTheLook) return [];
+  return product.completeTheLook
+    .map((id) => PRODUCTS.find((p) => p.id === id))
+    .filter((p): p is Product => p !== undefined);
+}
+
+export function getSustainabilityGrade(score: number): { grade: string; color: string } {
+  if (score >= 90) return { grade: "A+", color: "text-green-600" };
+  if (score >= 80) return { grade: "A", color: "text-green-500" };
+  if (score >= 70) return { grade: "B", color: "text-lime-500" };
+  if (score >= 60) return { grade: "C", color: "text-yellow-500" };
+  return { grade: "D", color: "text-orange-500" };
 }
 
 export const CATEGORIES: { slug: ProductCategory; label: string }[] = [
