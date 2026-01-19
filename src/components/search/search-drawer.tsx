@@ -5,7 +5,7 @@ import { Drawer } from "vaul";
 import { Search, X, ArrowRight, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { searchProducts, initSearchDb } from "@/lib/search";
-import { Product, PRODUCTS } from "@/data/products";
+import { Product, PRODUCTS } from "@/lib/product-data";
 import { useCartStore } from "@/store/cart-store";
 import { toast } from "sonner";
 
@@ -67,8 +67,8 @@ export function SearchDrawer() {
       name: product.name,
       price: product.price,
       image: product.image,
-      color: product.color,
-      size: product.size,
+      color: product.colors[0] || "Black",
+      size: product.sizes?.[0] || "M",
     });
     toast.success(`${product.name} added to cart`);
   };
@@ -168,7 +168,7 @@ export function SearchDrawer() {
                           </h3>
                           <div className="flex justify-between items-center mt-1">
                             <span className="text-xs text-gray-500 uppercase">{product.category}</span>
-                            <span className="font-mono text-sm">${product.price}</span>
+                            <span className="font-mono text-sm">₹{product.price}</span>
                           </div>
                         </motion.div>
                       ))}
@@ -254,7 +254,7 @@ export function SearchDrawer() {
                               />
                             </div>
                             <p className="text-xs font-medium uppercase truncate">{product.name}</p>
-                            <p className="text-xs text-gray-500">${product.price}</p>
+                            <p className="text-xs text-gray-500">₹{product.price}</p>
                           </div>
                         ))}
                       </div>
