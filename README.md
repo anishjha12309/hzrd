@@ -1,36 +1,229 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="public/images/hzrd-logo.svg" alt="HZRD" width="120" />
+</p>
 
-## Getting Started
+<h1 align="center">
+  <strong>H Z R D</strong>
+</h1>
 
-First, run the development server:
+<p align="center">
+  <em>"Defining the grey area between black and white."</em>
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#tech-stack">Tech Stack</a> •
+  <a href="#getting-started">Getting Started</a> •
+  <a href="#project-structure">Structure</a> •
+  <a href="#payment">Payment</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind-4-38B2AC?style=flat-square&logo=tailwind-css" alt="Tailwind" />
+</p>
+
+---
+
+## `// ABOUT`
+
+**HZRD** is a high-velocity, cutting-edge e-commerce fashion flagship built for Indian Gen Z. Inspired by the minimalist, motion-heavy, brutalist-chic aesthetic of Off-White and luxury streetwear brands.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│   ██   ██ ███████ ██████  ██████                           │
+│   ██   ██    ███  ██   ██ ██   ██                          │
+│   ███████   ███   ██████  ██   ██                          │
+│   ██   ██  ███    ██   ██ ██   ██                          │
+│   ██   ██ ███████ ██   ██ ██████                           │
+│                                                             │
+│   S T R E E T W E A R   //   L I M I T E D   E D I T I O N │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## `// FEATURES`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Feature | Description |
+|---------|-------------|
+| **Shop** | Browse all products with category filtering |
+| **Cart** | Add, remove, update quantities with Zustand persistence |
+| **Search** | Instant search powered by Orama full-text search |
+| **Checkout** | Complete checkout flow with shipping form |
+| **Payments** | Razorpay integration (Test Mode) |
+| **Order Tracking** | Real-time order status timeline |
+| **Responsive** | Mobile-first design across all pages |
 
-## Learn More
+### Pages
 
-To learn more about Next.js, take a look at the following resources:
+```
+/                   → Home (Hero + Product Carousel)
+/shop               → All Products
+/shop/t-shirts      → T-Shirts Category
+/shop/hoodies       → Hoodies Category
+/shop/pants         → Pants Category
+/shop/accessories   → Accessories Category
+/checkout           → Checkout with Payment
+/order-success      → Order Confirmation
+/track-order        → Track Your Order
+/about              → Brand Story
+/contact            → Contact Form
+/faq                → Frequently Asked Questions
+/size-guide         → Size Charts
+/shipping           → Shipping & Returns Policy
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## `// TECH STACK`
 
-## Deploy on Vercel
+```
+FRAMEWORK       Next.js 16 (App Router, RSC)
+UI              React 19
+STYLING         Tailwind CSS 4.0
+STATE           Zustand (Persisted Cart)
+SEARCH          @orama/orama
+PAYMENTS        Razorpay
+ANIMATIONS      Framer Motion, GSAP
+COMPONENTS      Radix UI, Vaul (Drawers)
+CAROUSEL        Embla Carousel
+ICONS           Lucide React
+NOTIFICATIONS   Sonner
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## `// GETTING STARTED`
+
+### Prerequisites
+
+- Node.js 18+
+- npm or pnpm
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/anishjha12309/hzrd.git
+cd hzrd/hzrd-store
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+```
+
+### Environment Variables
+
+```env
+# Razorpay (Test Mode)
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_xxxxx
+RAZORPAY_KEY_SECRET=xxxxx
+```
+
+### Development
+
+```bash
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+---
+
+## `// PROJECT STRUCTURE`
+
+```
+hzrd-store/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── api/               # API Routes
+│   │   │   ├── create-order/  # Razorpay order creation
+│   │   │   └── verify-payment/# Payment verification
+│   │   ├── shop/              # Shop pages
+│   │   ├── checkout/          # Checkout page
+│   │   ├── order-success/     # Order confirmation
+│   │   └── ...                # Other pages
+│   ├── components/
+│   │   ├── layout/            # Navbar, Footer
+│   │   ├── home/              # Hero, Carousel
+│   │   ├── shop/              # ProductGrid, CategoryNav
+│   │   ├── cart/              # CartDrawer
+│   │   ├── menu/              # MenuDrawer
+│   │   └── search/            # SearchDrawer
+│   ├── lib/
+│   │   ├── product-data.ts    # Product catalog
+│   │   └── search.ts          # Orama search
+│   └── store/
+│       └── cart-store.ts      # Zustand cart state
+├── public/
+│   └── images/                # Product images
+└── ...
+```
+
+---
+
+## `// PAYMENT`
+
+### Razorpay Test Mode
+
+This project uses Razorpay in test mode. Use these test cards:
+
+| Card Type | Number | CVV | Expiry |
+|-----------|--------|-----|--------|
+| **Success** | `4111 1111 1111 1111` | Any | Any future |
+| **Failure** | `4000 0000 0000 0002` | Any | Any future |
+
+---
+
+## `// DESIGN SYSTEM`
+
+```css
+/* Typography */
+--font-heading: 'Oswald', sans-serif;
+--font-body: 'Inter', sans-serif;
+--font-mono: 'JetBrains Mono', monospace;
+
+/* Colors */
+--bg-primary: #F4F4F0;
+--bg-secondary: #EAEAE5;
+--text-primary: #000000;
+--text-muted: #6B7280;
+
+/* Design Principles */
+- Brutalist borders
+- Industrial grid layouts
+- Stark black/white contrast
+- Generous whitespace
+- Uppercase headings
+- Monospace labels
+```
+
+---
+
+## `// LICENSE`
+
+MIT © 2026 HZRD
+
+---
+
+<p align="center">
+  <strong>HEAVY WEIGHT COTTON</strong>
+  <br />
+  <em>Built for the bold. Limited editions only.</em>
+</p>
+
+<p align="center">
+  <sub>Made with ◼ by HZRD</sub>
+</p>
