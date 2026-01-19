@@ -11,7 +11,7 @@ const MOCK_TRACKING = {
   carrier: "BlueDart Express",
   trackingNumber: "BD987654321IN",
   estimatedDelivery: "January 25, 2026",
-  shippingAddress: "123 MG Road, Bandra West, Mumbai, Maharashtra 400050",
+  shippingAddress: "456 Connaught Place, New Delhi, Delhi 110001",
   timeline: [
     {
       id: 1,
@@ -28,7 +28,7 @@ const MOCK_TRACKING = {
       description: "Package being prepared",
       date: "Jan 20, 2026",
       time: "10:30 AM",
-      location: "HZRD Warehouse, Mumbai",
+      location: "HZRD Warehouse, Delhi",
       completed: true,
     },
     {
@@ -37,7 +37,7 @@ const MOCK_TRACKING = {
       description: "Handed to courier partner",
       date: "Jan 20, 2026",
       time: "4:00 PM",
-      location: "Mumbai Hub",
+      location: "Delhi Hub",
       completed: true,
     },
     {

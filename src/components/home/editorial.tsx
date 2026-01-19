@@ -16,7 +16,7 @@ export function Editorial() {
                  &quot;OWN YOUR CHAOS&quot;
                  </p> 
                  <p>
-                 From the crowded lanes of Mumbai to the underground rave scenes of Bangalore. HZRD is not just clothing; it&apos;s the uniform of the new rebellion.
+                 From the crowded lanes of Delhi to the underground rave scenes of Bangalore. HZRD is not just clothing; it&apos;s the uniform of the new rebellion.
                  </p>
                  <button className="px-8 py-3 border border-white uppercase text-xs font-bold tracking-widest hover:bg-white hover:text-black transition-colors">
                     Read The Story

@@ -288,7 +288,7 @@ export default function CheckoutPage() {
                         value={formData.city}
                         onChange={handleInputChange}
                         className="w-full border-2 border-gray-200 focus:border-black p-4 font-sans outline-none transition-colors"
-                        placeholder="Mumbai"
+                        placeholder="Delhi"
                       />
                     </div>
                     <div>

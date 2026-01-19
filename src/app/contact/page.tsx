@@ -52,7 +52,7 @@ export default function ContactPage() {
                     Location
                   </span>
                   <p className="font-sans text-lg text-gray-700">
-                    Mumbai, India
+                    Delhi, India
                   </p>
                 </div>
                 <div>
