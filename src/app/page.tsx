@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
 import { Ticker } from "@/components/home/ticker";
 import { ProductCarousel } from "@/components/home/product-carousel";
+import { RecentlyViewed } from "@/components/product/recently-viewed";
 import { Footer } from "@/components/layout/footer";
 
 export const metadata: Metadata = {
@@ -34,6 +35,7 @@ export default function Home() {
       <Hero />
       <Ticker />
       <ProductCarousel />
+      <RecentlyViewed />
       <Footer />
     </main>
   );

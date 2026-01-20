@@ -8,6 +8,8 @@ import { searchProducts, initSearchDb } from "@/lib/search";
 import { Product, PRODUCTS } from "@/lib/product-data";
 import { useCartStore } from "@/store/cart-store";
 import { toast } from "sonner";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import Link from "next/link";
 
 export function SearchDrawer() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,8 +17,15 @@ export function SearchDrawer() {
   const [results, setResults] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const addItem = useCartStore((state) => state.addItem);
+  const { setOpenSearchHandler } = useKeyboardShortcuts();
+
+  // Register with keyboard shortcuts
+  useEffect(() => {
+    setOpenSearchHandler(() => setIsOpen(true));
+  }, [setOpenSearchHandler]);
 
   // Initialize search db on mount
   useEffect(() => {
@@ -33,6 +42,8 @@ export function SearchDrawer() {
     if (isOpen && inputRef.current) {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
+    // Reset selection when drawer opens/closes
+    setSelectedIndex(-1);
   }, [isOpen]);
 
   // Debounced search
@@ -43,13 +54,33 @@ export function SearchDrawer() {
         const searchResults = await searchProducts(query);
         setResults(searchResults);
         setIsSearching(false);
+        setSelectedIndex(-1); // Reset selection on new results
       } else {
         setResults([]);
+        setSelectedIndex(-1);
       }
     }, 200);
 
     return () => clearTimeout(timer);
   }, [query]);
+
+  // Handle keyboard navigation in search results
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (results.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev < results.length - 1 ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : results.length - 1));
+    } else if (e.key === "Enter" && selectedIndex >= 0) {
+      e.preventDefault();
+      const product = results[selectedIndex];
+      window.location.href = `/product/${product.id}`;
+      setIsOpen(false);
+    }
+  }, [results, selectedIndex]);
 
   const handleSearch = useCallback((searchQuery: string) => {
     setQuery(searchQuery);
@@ -111,6 +142,7 @@ export function SearchDrawer() {
                     type="text"
                     value={query}
                     onChange={(e) => handleSearch(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="Search products, categories..."
                     className="flex-1 text-2xl md:text-4xl font-heading uppercase tracking-tight outline-none placeholder:text-gray-300 bg-transparent"
                   />

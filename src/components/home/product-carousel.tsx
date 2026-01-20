@@ -2,13 +2,14 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { ChevronLeft, ChevronRight, Plus, Heart } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Heart, Eye } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { useCartStore } from "@/store/cart-store";
 import { useWishlistStore } from "@/store/wishlist-store";
 import { toast } from "sonner";
 import Link from "next/link";
-import { PRODUCTS } from "@/lib/product-data";
+import { PRODUCTS, Product } from "@/lib/product-data";
+import { QuickViewModal } from "@/components/product/quick-view-modal";
 
 export function ProductCarousel() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" }, [
@@ -17,6 +18,7 @@ export function ProductCarousel() {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const addItem = useCartStore((state) => state.addItem);
   const { toggleItem, isInWishlist } = useWishlistStore();
 
@@ -127,35 +129,50 @@ export function ProductCarousel() {
                     </div>
                   </Link>
                   
-                  {/* Hover Actions */}
-                  <div className="absolute bottom-20 left-4 right-4 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 translate-y-2 group-hover:translate-y-0">
-                    {/* Quick Add Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleQuickAdd(product);
-                      }}
-                      className="bg-white px-4 py-2.5 text-xs font-mono uppercase hover:bg-black hover:text-white flex items-center gap-2 shadow-sm transition-colors"
-                    >
-                      <Plus className="w-3 h-3" />
-                      Quick Add
-                    </button>
+                    {/* Hover Actions */}
+                    <div className="absolute bottom-20 left-4 right-4 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 translate-y-2 group-hover:translate-y-0">
+                      {/* Quick Add Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleQuickAdd(product);
+                        }}
+                        className="bg-white px-4 py-2.5 text-xs font-mono uppercase hover:bg-black hover:text-white flex items-center gap-2 shadow-sm transition-colors"
+                      >
+                        <Plus className="w-3 h-3" />
+                        Quick Add
+                      </button>
 
-                    {/* Wishlist Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleWishlistToggle(product);
-                      }}
-                      className={`w-9 h-9 flex items-center justify-center border shadow-sm transition-all ${
-                        inWishlist
-                          ? "bg-black border-black text-white"
-                          : "bg-white border-gray-200 hover:border-black"
-                      }`}
-                    >
-                      <Heart className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`} />
-                    </button>
-                  </div>
+                      {/* Action Buttons */}
+                      <div className="flex gap-1">
+                        {/* Quick View Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setQuickViewProduct(product);
+                          }}
+                          className="w-9 h-9 flex items-center justify-center bg-white border border-gray-200 hover:border-black hover:bg-black hover:text-white shadow-sm transition-all"
+                          title="Quick View"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+
+                        {/* Wishlist Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleWishlistToggle(product);
+                          }}
+                          className={`w-9 h-9 flex items-center justify-center border shadow-sm transition-all ${
+                            inWishlist
+                              ? "bg-black border-black text-white"
+                              : "bg-white border-gray-200 hover:border-black"
+                          }`}
+                        >
+                          <Heart className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`} />
+                        </button>
+                      </div>
+                    </div>
 
                   {/* Product Info */}
                   <Link href={`/product/${product.id}`}>
@@ -188,6 +205,14 @@ export function ProductCarousel() {
           <ChevronRight className="w-4 h-4" />
         </Link>
       </div>
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={quickViewProduct !== null}
+        onClose={() => setQuickViewProduct(null)}
+      />
     </section>
   );
 }
+

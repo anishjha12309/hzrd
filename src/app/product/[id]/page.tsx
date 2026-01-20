@@ -14,6 +14,9 @@ import { toast } from "sonner";
 import { Footer } from "@/components/layout/footer";
 import { SustainabilityBadge } from "@/components/product/sustainability-badge";
 import { CompleteTheLook } from "@/components/product/complete-the-look";
+import { RecentlyViewed } from "@/components/product/recently-viewed";
+import { useRecentlyViewedStore } from "@/store/recently-viewed-store";
+import { StickyAddToCart } from "@/components/product/sticky-add-to-cart";
 
 // Product JSON-LD Schema
 function ProductSchema({ product }: { product: Product }) {
@@ -61,6 +64,7 @@ export default function ProductPage() {
   const [activeTab, setActiveTab] = useState<"details" | "specs" | "care">("details");
   const addItem = useCartStore((state) => state.addItem);
   const { toggleItem, isInWishlist } = useWishlistStore();
+  const addToRecentlyViewed = useRecentlyViewedStore((state) => state.addProduct);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   useEffect(() => {
@@ -71,10 +75,18 @@ export default function ProductPage() {
       setSelectedSize(p.sizes[0]);
       setRelatedProducts(getRelatedProducts(p, 4));
       setIsWishlisted(isInWishlist(p.id));
+      // Track in recently viewed
+      addToRecentlyViewed({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        image: p.image,
+        category: p.category,
+      });
       // Update document title
       document.title = `${p.name} | HZRD`;
     }
-  }, [productId, isInWishlist]);
+  }, [productId, isInWishlist, addToRecentlyViewed]);
 
   if (!product) {
     return (
@@ -261,6 +273,7 @@ export default function ProductPage() {
 
               {/* Add to Cart Button */}
               <button
+                id="main-add-to-cart"
                 onClick={handleAddToCart}
                 className="flex-1 h-14 bg-black text-white font-heading uppercase tracking-widest text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
               >
@@ -425,7 +438,18 @@ export default function ProductPage() {
         </section>
       )}
 
+      {/* Recently Viewed */}
+      <RecentlyViewed />
+
       <Footer />
+
+      {/* Sticky Add to Cart (Mobile) */}
+      <StickyAddToCart
+        product={product}
+        selectedColor={selectedColor}
+        selectedSize={selectedSize}
+        onAddToCart={handleAddToCart}
+      />
     </main>
     </>
   );

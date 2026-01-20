@@ -5,6 +5,7 @@ import SmoothScroll from "@/components/providers/smooth-scroll";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { KeyboardShortcutsProvider } from "@/hooks/use-keyboard-shortcuts";
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -191,11 +192,13 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <SmoothScroll>
-            <Navbar />
-            {children}
-            <Toaster richColors closeButton />
-          </SmoothScroll>
+          <KeyboardShortcutsProvider>
+            <SmoothScroll>
+              <Navbar />
+              {children}
+              <Toaster richColors closeButton />
+            </SmoothScroll>
+          </KeyboardShortcutsProvider>
         </ThemeProvider>
       </body>
     </html>

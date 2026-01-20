@@ -25,7 +25,7 @@ export function Footer() {
             <h3 className="font-heading font-black text-2xl uppercase mb-4">Social</h3>
             <ul className="space-y-2 font-mono text-sm uppercase tracking-wide">
               <li><a href="#" className="hover:underline">Instagram</a></li>
-              <li><a href="#" className="hover:underline">TikTok</a></li>
+              <li><a href="#" className="hover:underline">X (Twitter)</a></li>
               <li><a href="#" className="hover:underline">YouTube</a></li>
             </ul>
          </div>

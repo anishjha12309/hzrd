@@ -449,6 +449,230 @@ export const PRODUCTS: Product[] = [
     sustainability: { ...ACCESSORY_SUSTAINABILITY, score: 70 },
     completeTheLook: [7, 8, 16],
   },
+
+  // NEW PRODUCTS - Chic Collection
+
+  // Turtleneck
+  {
+    id: 21,
+    name: "RIBBED TURTLENECK // VOID",
+    price: 2499,
+    image: "/images/turtleneck_black.png",
+    category: "hoodies",
+    colors: ["Black", "Charcoal", "Navy"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    description: "Premium heavyweight ribbed turtleneck sweater. Dense knit construction with an elegant roll neck. Perfect layering piece for cold weather.",
+    specs: {
+      gsm: 400,
+      material: "100% Merino Wool Blend",
+      fit: "Regular / Slightly Relaxed",
+      care: ["Hand wash cold", "Lay flat to dry", "Do not iron"],
+      origin: "Made in Italy",
+      features: ["Ribbed knit", "Roll neck collar", "Ribbed cuffs & hem", "Side vents"],
+    },
+    sustainability: { ...ORGANIC_COTTON_SUSTAINABILITY, score: 88 },
+    completeTheLook: [12, 14, 17],
+    featured: true,
+  },
+
+  // Cardigan
+  {
+    id: 22,
+    name: "CABLE KNIT CARDIGAN // IVORY",
+    price: 3299,
+    image: "/images/cardigan_cream.png",
+    category: "hoodies",
+    colors: ["Cream", "Oatmeal", "Black"],
+    sizes: ["S", "M", "L", "XL"],
+    description: "Luxurious cable knit cardigan with a relaxed, oversized silhouette. Wooden button closure. Perfect for layering over tees and shirts.",
+    specs: {
+      gsm: 450,
+      material: "100% Organic Cotton",
+      fit: "Oversized / Relaxed",
+      care: ["Hand wash cold", "Dry clean recommended", "Lay flat to dry"],
+      origin: "Made in India",
+      features: ["Cable knit pattern", "Wood buttons", "Deep V-neck", "Ribbed trim"],
+    },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [3, 12, 17],
+    featured: true,
+  },
+
+  // Bomber Jacket
+  {
+    id: 23,
+    name: "NYLON BOMBER // OLIVE",
+    price: 4499,
+    image: "/images/bomber_olive.png",
+    category: "hoodies",
+    colors: ["Olive", "Black", "Navy"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    description: "Classic MA-1 silhouette bomber jacket in premium matte nylon. Ribbed collar, cuffs and hem. Two side pockets with snap closure.",
+    specs: {
+      material: "100% Nylon Shell / Polyester Lining",
+      fit: "Regular / Classic",
+      care: ["Machine wash cold", "Hang dry", "Do not bleach"],
+      origin: "Made in India",
+      features: ["YKK zipper", "Ribbed collar & cuffs", "Side pockets", "Interior pocket"],
+    },
+    sustainability: { ...BLENDED_SUSTAINABILITY, score: 68 },
+    completeTheLook: [1, 12, 17],
+    featured: true,
+  },
+
+  // Overshirt
+  {
+    id: 24,
+    name: "TWILL OVERSHIRT // CHARCOAL",
+    price: 2799,
+    image: "/images/overshirt_charcoal.png",
+    category: "hoodies",
+    colors: ["Charcoal", "Olive", "Black"],
+    sizes: ["S", "M", "L", "XL"],
+    description: "Heavyweight cotton twill overshirt. Button-front with two chest flap pockets. Works as a light jacket or layering piece.",
+    specs: {
+      gsm: 340,
+      material: "100% Cotton Twill",
+      fit: "Relaxed / Boxy",
+      care: ["Machine wash cold", "Tumble dry low", "Iron medium heat"],
+      origin: "Made in India",
+      features: ["Button front", "Chest pockets", "Side seam pockets", "Adjustable cuffs"],
+    },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [2, 14, 18],
+  },
+
+  // Knit Polo
+  {
+    id: 25,
+    name: "WAFFLE KNIT POLO // NAVY",
+    price: 1899,
+    image: "/images/polo_navy.png",
+    category: "t-shirts",
+    colors: ["Navy", "Black", "Cream"],
+    sizes: ["S", "M", "L", "XL"],
+    description: "Premium textured waffle knit polo. Johnny collar with no buttons for a clean modern look. Elevated basic for smart casual wear.",
+    specs: {
+      gsm: 280,
+      material: "100% Cotton Waffle Knit",
+      fit: "Regular / Relaxed",
+      care: ["Machine wash cold", "Tumble dry low", "Iron low heat"],
+      origin: "Made in India",
+      features: ["Waffle texture", "Johnny collar", "Ribbed sleeves", "Side vents"],
+    },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [12, 14, 19],
+  },
+
+  // Quilted Vest
+  {
+    id: 26,
+    name: "QUILTED VEST // VOID",
+    price: 2999,
+    image: "/images/vest_black.png",
+    category: "hoodies",
+    colors: ["Black", "Olive", "Navy"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    description: "Lightweight quilted vest with diamond pattern. Perfect layering piece for transitional weather. Stand collar with full zip.",
+    specs: {
+      material: "100% Nylon Shell / Recycled Fill",
+      fit: "Regular",
+      care: ["Machine wash cold", "Tumble dry low", "Do not bleach"],
+      origin: "Made in India",
+      features: ["Diamond quilting", "Stand collar", "Zip pockets", "Interior pocket"],
+    },
+    sustainability: { ...BLENDED_SUSTAINABILITY, score: 75 },
+    completeTheLook: [21, 3, 17],
+  },
+
+  // Sweatpants
+  {
+    id: 27,
+    name: "WAFFLE JOGGERS // HEATHER",
+    price: 1999,
+    image: "/images/sweatpants_grey.png",
+    category: "pants",
+    colors: ["Grey", "Black", "Cream"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    description: "Premium waffle knit joggers with an elevated look. Elasticated waist with internal drawcord. Tapered leg with ribbed cuffs.",
+    specs: {
+      gsm: 320,
+      material: "100% Cotton Waffle Fleece",
+      fit: "Regular / Tapered",
+      care: ["Machine wash cold", "Tumble dry low", "Iron low heat"],
+      origin: "Made in India",
+      features: ["Waffle texture", "Elastic waist", "Side pockets", "Ribbed cuffs"],
+    },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [7, 21, 19],
+  },
+
+  // Mock Neck
+  {
+    id: 28,
+    name: "RIBBED MOCK NECK // ARCTIC",
+    price: 1599,
+    image: "/images/mockneck_white.png",
+    category: "t-shirts",
+    colors: ["White", "Black", "Grey"],
+    sizes: ["S", "M", "L", "XL"],
+    description: "Clean ribbed mock neck long sleeve. Slim fit silhouette with subtle stretch. Perfect base layer or standalone statement piece.",
+    specs: {
+      gsm: 220,
+      material: "95% Cotton / 5% Elastane Rib",
+      fit: "Slim / Fitted",
+      care: ["Machine wash cold", "Tumble dry low", "Iron low heat"],
+      origin: "Made in India",
+      features: ["Ribbed texture", "Mock collar", "Stretch comfort", "Seamless sides"],
+    },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [23, 12, 17],
+  },
+
+  // Zip Hoodie
+  {
+    id: 29,
+    name: "FULL ZIP HOODIE // VOID",
+    price: 2699,
+    image: "/images/zip_hoodie_black.png",
+    category: "hoodies",
+    colors: ["Black", "Grey", "Navy"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    description: "Premium heavyweight full-zip hoodie. Brushed fleece interior for maximum comfort. Split kangaroo pocket with metal YKK zipper.",
+    specs: {
+      gsm: 400,
+      material: "100% Heavyweight Cotton Fleece",
+      fit: "Regular / Relaxed",
+      care: ["Machine wash cold", "Tumble dry low", "Iron inside out"],
+      origin: "Made in India",
+      features: ["YKK metal zipper", "Brushed interior", "Kangaroo pocket", "Drawstring hood"],
+    },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [12, 27, 19],
+    featured: true,
+  },
+
+  // Cargo Shorts
+  {
+    id: 30,
+    name: "CARGO SHORTS // MOSS",
+    price: 1799,
+    image: "/images/cargo_shorts_olive.png",
+    category: "pants",
+    colors: ["Olive", "Black", "Khaki"],
+    sizes: ["28", "30", "32", "34", "36"],
+    description: "Relaxed fit cargo shorts in durable cotton twill. Multiple utility pockets with flap closures. Adjustable drawstring waist.",
+    specs: {
+      gsm: 280,
+      material: "100% Cotton Twill",
+      fit: "Relaxed / Above Knee",
+      care: ["Machine wash cold", "Tumble dry low", "Iron medium heat"],
+      origin: "Made in India",
+      features: ["Cargo pockets", "Drawstring waist", "Belt loops", "10 inch inseam"],
+    },
+    sustainability: ORGANIC_COTTON_SUSTAINABILITY,
+    completeTheLook: [1, 25, 19],
+  },
 ];
 
 export function getProductsByCategory(category: ProductCategory): Product[] {
