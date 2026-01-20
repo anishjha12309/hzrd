@@ -73,7 +73,8 @@ export function ProductGrid({ products }: ProductGridProps) {
                   src={product.image}
                   alt={product.name}
                   fill
-                  className="object-cover mix-blend-multiply p-8 group-hover:scale-105 transition-transform duration-700 ease-out"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover p-8 group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
                 {product.featured && (
                   <span className="absolute top-4 left-4 bg-black text-white px-3 py-1 font-mono text-xs uppercase z-20">

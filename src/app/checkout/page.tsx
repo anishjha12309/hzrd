@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Script from "next/script";
 import { useCartStore } from "@/store/cart-store";
+import { useOrderStore, generateOrderNumber } from "@/store/order-store";
 import { Footer } from "@/components/layout/footer";
 import { Loader2, Lock, CreditCard, Truck } from "lucide-react";
 import { toast } from "sonner";
@@ -18,6 +19,7 @@ declare global {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, getSubtotal, getDiscount, getShipping, getTotal, clearCart } = useCartStore();
+  const addOrder = useOrderStore((state) => state.addOrder);
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -88,11 +90,40 @@ export default function CheckoutPage() {
       // Check if this is a mock order (secret not configured)
       if (orderData.isMock) {
         toast.success("Demo mode: Simulating successful payment");
+        // Generate order number and save order
+        const orderNumber = generateOrderNumber();
+        const paymentId = `pay_demo_${Date.now()}`;
+        
+        // Create and save order
+        addOrder({
+          orderNumber,
+          items: [...items],
+          customer: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+          },
+          shippingAddress: {
+            address: formData.address,
+            city: formData.city,
+            state: formData.state,
+            pincode: formData.pincode,
+          },
+          subtotal,
+          discount,
+          shipping,
+          total,
+          orderDate: new Date().toISOString(),
+          paymentId,
+          status: "processing",
+        });
+
         // Simulate payment success in mock mode
         setTimeout(() => {
           clearCart();
           router.push(
-            `/order-success?orderId=${orderData.order.id}&paymentId=pay_demo_${Date.now()}`
+            `/order-success?orderId=${orderNumber}&paymentId=${paymentId}`
           );
         }, 1500);
         return;
@@ -121,10 +152,38 @@ export default function CheckoutPage() {
           const verifyData = await verifyResponse.json();
 
           if (verifyData.success) {
+            // Generate order number and save order
+            const orderNumber = generateOrderNumber();
+            
+            // Create and save order
+            addOrder({
+              orderNumber,
+              items: [...items],
+              customer: {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                phone: formData.phone,
+              },
+              shippingAddress: {
+                address: formData.address,
+                city: formData.city,
+                state: formData.state,
+                pincode: formData.pincode,
+              },
+              subtotal,
+              discount,
+              shipping,
+              total,
+              orderDate: new Date().toISOString(),
+              paymentId: response.razorpay_payment_id,
+              status: "processing",
+            });
+
             // Clear cart and redirect to success page
             clearCart();
             router.push(
-              `/order-success?orderId=${response.razorpay_order_id}&paymentId=${response.razorpay_payment_id}`
+              `/order-success?orderId=${orderNumber}&paymentId=${response.razorpay_payment_id}`
             );
           } else {
             toast.error("Payment verification failed. Please contact support.");
@@ -384,6 +443,7 @@ export default function CheckoutPage() {
                             src={item.image}
                             alt={item.name}
                             fill
+                            sizes="80px"
                             className="object-cover mix-blend-multiply p-2"
                           />
                         </div>

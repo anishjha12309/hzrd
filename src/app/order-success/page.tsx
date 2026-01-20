@@ -11,13 +11,15 @@ function OrderSuccessContent() {
   const orderId = searchParams.get("orderId");
   const paymentId = searchParams.get("paymentId");
 
-  // Use state to avoid hydration mismatch
+  // Use orderId from URL as order number (it's already the real order number)
   const [orderNumber, setOrderNumber] = useState("HZRD-XXXXXXXX");
   const [formattedDeliveryDate, setFormattedDeliveryDate] = useState("Loading...");
 
   useEffect(() => {
-    // Generate order number on client only
-    setOrderNumber(`HZRD-${Date.now().toString(36).toUpperCase().slice(-8)}`);
+    // Use orderId from URL if available, otherwise generate placeholder
+    if (orderId) {
+      setOrderNumber(orderId);
+    }
     
     // Calculate delivery date on client only
     const deliveryDate = new Date();
@@ -28,7 +30,7 @@ function OrderSuccessContent() {
       month: "long",
       day: "numeric",
     }));
-  }, []);
+  }, [orderId]);
 
   const steps = [
     {

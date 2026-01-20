@@ -1,90 +1,113 @@
 "use client";
 
-import { useState } from "react";
-import { Package, Truck, CheckCircle, MapPin, Clock, Search, Box } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Package, Truck, CheckCircle, MapPin, Clock, Search, Box, ShoppingBag } from "lucide-react";
 import { Footer } from "@/components/layout/footer";
-
-// Mock tracking data
-const MOCK_TRACKING = {
-  orderNumber: "HZRD-K7M2X9LP",
-  status: "in_transit",
-  carrier: "BlueDart Express",
-  trackingNumber: "BD987654321IN",
-  estimatedDelivery: "January 25, 2026",
-  shippingAddress: "456 Connaught Place, New Delhi, Delhi 110001",
-  timeline: [
-    {
-      id: 1,
-      status: "Order Placed",
-      description: "Order confirmed and payment received",
-      date: "Jan 19, 2026",
-      time: "9:00 PM",
-      location: "Online",
-      completed: true,
-    },
-    {
-      id: 2,
-      status: "Processing",
-      description: "Package being prepared",
-      date: "Jan 20, 2026",
-      time: "10:30 AM",
-      location: "HZRD Warehouse, Delhi",
-      completed: true,
-    },
-    {
-      id: 3,
-      status: "Shipped",
-      description: "Handed to courier partner",
-      date: "Jan 20, 2026",
-      time: "4:00 PM",
-      location: "Delhi Hub",
-      completed: true,
-    },
-    {
-      id: 4,
-      status: "In Transit",
-      description: "Package is on its way",
-      date: "Jan 21, 2026",
-      time: "8:00 AM",
-      location: "Delhi Sorting Facility",
-      completed: true,
-      current: true,
-    },
-    {
-      id: 5,
-      status: "Out for Delivery",
-      description: "With delivery agent",
-      date: "Jan 25, 2026",
-      time: "9:00 AM",
-      location: "Local Hub",
-      completed: false,
-    },
-    {
-      id: 6,
-      status: "Delivered",
-      description: "Package delivered",
-      date: "Jan 25, 2026",
-      time: "By 8:00 PM",
-      location: "Your Address",
-      completed: false,
-    },
-  ],
-};
+import { useOrderStore, Order } from "@/store/order-store";
 
 export default function TrackOrderPage() {
   const [orderNumber, setOrderNumber] = useState("");
-  const [tracking, setTracking] = useState<typeof MOCK_TRACKING | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
+  const getOrderByNumber = useOrderStore((state) => state.getOrderByNumber);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleTrack = (e: React.FormEvent) => {
     e.preventDefault();
     if (!orderNumber.trim()) {
       setError("Please enter an order number");
+      setOrder(null);
       return;
     }
-    // Mock tracking - in real app, would fetch from API
-    setTracking(MOCK_TRACKING);
-    setError("");
+    
+    const foundOrder = getOrderByNumber(orderNumber.trim());
+    if (foundOrder) {
+      setOrder(foundOrder);
+      setError("");
+    } else {
+      setOrder(null);
+      setError("Order not found. Please check your order number and try again.");
+    }
+  };
+
+  // Generate timeline based on order status
+  const getTimeline = (order: Order) => {
+    const orderDate = new Date(order.orderDate);
+    const formatDate = (date: Date) => date.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" });
+    const formatTime = (date: Date) => date.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true });
+
+    // Calculate estimated dates
+    const processingDate = new Date(orderDate);
+    processingDate.setHours(processingDate.getHours() + 2);
+    
+    const shippedDate = new Date(orderDate);
+    shippedDate.setDate(shippedDate.getDate() + 1);
+    
+    const transitDate = new Date(orderDate);
+    transitDate.setDate(transitDate.getDate() + 2);
+    
+    const deliveryDate = new Date(orderDate);
+    deliveryDate.setDate(deliveryDate.getDate() + 5);
+
+    const statusOrder = ["processing", "shipped", "in_transit", "delivered"];
+    const currentIndex = statusOrder.indexOf(order.status);
+
+    return [
+      {
+        id: 1,
+        status: "Order Placed",
+        description: "Order confirmed and payment received",
+        date: formatDate(orderDate),
+        time: formatTime(orderDate),
+        location: "Online",
+        completed: true,
+        current: currentIndex === 0,
+      },
+      {
+        id: 2,
+        status: "Processing",
+        description: "Package being prepared at warehouse",
+        date: formatDate(processingDate),
+        time: formatTime(processingDate),
+        location: "HZRD Warehouse, Delhi",
+        completed: currentIndex >= 0,
+        current: currentIndex === 0,
+      },
+      {
+        id: 3,
+        status: "Shipped",
+        description: "Handed to courier partner",
+        date: currentIndex >= 1 ? formatDate(shippedDate) : `Est. ${formatDate(shippedDate)}`,
+        time: currentIndex >= 1 ? formatTime(shippedDate) : "",
+        location: "Delhi Hub",
+        completed: currentIndex >= 1,
+        current: currentIndex === 1,
+      },
+      {
+        id: 4,
+        status: "In Transit",
+        description: "Package is on its way",
+        date: currentIndex >= 2 ? formatDate(transitDate) : `Est. ${formatDate(transitDate)}`,
+        time: currentIndex >= 2 ? formatTime(transitDate) : "",
+        location: "Sorting Facility",
+        completed: currentIndex >= 2,
+        current: currentIndex === 2,
+      },
+      {
+        id: 5,
+        status: "Delivered",
+        description: "Package delivered",
+        date: currentIndex >= 3 ? formatDate(deliveryDate) : `Est. ${formatDate(deliveryDate)}`,
+        time: currentIndex >= 3 ? formatTime(deliveryDate) : "",
+        location: "Your Address",
+        completed: currentIndex >= 3,
+        current: currentIndex === 3,
+      },
+    ];
   };
 
   const getStatusIcon = (status: string) => {
@@ -97,12 +120,20 @@ export default function TrackOrderPage() {
         return Package;
       case "In Transit":
         return Truck;
-      case "Out for Delivery":
-        return Truck;
       case "Delivered":
         return CheckCircle;
       default:
         return Package;
+    }
+  };
+
+  const getStatusLabel = (status: Order["status"]) => {
+    switch (status) {
+      case "processing": return "Processing";
+      case "shipped": return "Shipped";
+      case "in_transit": return "In Transit";
+      case "delivered": return "Delivered";
+      default: return status;
     }
   };
 
@@ -131,7 +162,7 @@ export default function TrackOrderPage() {
                   type="text"
                   value={orderNumber}
                   onChange={(e) => setOrderNumber(e.target.value)}
-                  placeholder="Enter order number"
+                  placeholder="Enter order number (e.g., HZRD-XXXXXXXX)"
                   className="w-full border-2 border-gray-200 focus:border-black pl-12 pr-4 py-4 font-mono text-sm outline-none transition-colors uppercase"
                 />
               </div>
@@ -145,15 +176,12 @@ export default function TrackOrderPage() {
             {error && (
               <p className="text-red-500 font-mono text-sm mt-3">{error}</p>
             )}
-            <p className="font-mono text-xs text-gray-400 mt-3 text-center">
-              Enter any text to see a demo result
-            </p>
           </div>
         </div>
       </section>
 
-      {/* Tracking Result */}
-      {tracking && (
+      {/* Order Result */}
+      {mounted && order && (
         <>
           {/* Status Banner */}
           <section className="bg-black text-white py-6">
@@ -161,24 +189,92 @@ export default function TrackOrderPage() {
               <div className="max-w-3xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
-                    <Truck className="w-6 h-6" />
+                    {order.status === "delivered" ? (
+                      <CheckCircle className="w-6 h-6" />
+                    ) : (
+                      <Truck className="w-6 h-6" />
+                    )}
                   </div>
                   <div>
                     <p className="font-heading text-xl uppercase tracking-tight">
-                      In Transit
+                      {getStatusLabel(order.status)}
                     </p>
                     <p className="font-mono text-xs text-gray-400 mt-0.5">
-                      Est. delivery: {tracking.estimatedDelivery}
+                      Order: {order.orderNumber}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="font-mono text-xs text-gray-400">
-                    {tracking.carrier}
+                    Order Total
                   </p>
-                  <p className="font-mono text-sm">
-                    {tracking.trackingNumber}
+                  <p className="font-mono text-lg">
+                    ₹{order.total.toLocaleString()}
                   </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Order Items */}
+          <section className="py-8 border-b border-gray-100">
+            <div className="container mx-auto px-4 md:px-8">
+              <div className="max-w-3xl mx-auto">
+                <h3 className="font-heading text-lg uppercase tracking-tight mb-6">
+                  Items Ordered
+                </h3>
+                <div className="space-y-4">
+                  {order.items.map((item, index) => (
+                    <div key={`${item.id}-${index}`} className="flex gap-4 p-4 bg-gray-50 border border-gray-100">
+                      <div className="w-20 h-24 bg-white flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover mix-blend-multiply"
+                        />
+                      </div>
+                      <div className="flex-1 flex flex-col justify-between">
+                        <div>
+                          <h4 className="font-sans font-medium text-sm">{item.name}</h4>
+                          <p className="text-xs text-gray-500 mt-1 uppercase">
+                            Size: {item.size} / Color: {item.color}
+                          </p>
+                        </div>
+                        <div className="flex justify-between items-end">
+                          <span className="font-mono text-xs text-gray-500">
+                            Qty: {item.quantity}
+                          </span>
+                          <span className="font-mono text-sm">
+                            ₹{(item.price * item.quantity).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Order Summary */}
+                <div className="mt-6 pt-6 border-t border-gray-200 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Subtotal</span>
+                    <span className="font-mono">₹{order.subtotal.toLocaleString()}</span>
+                  </div>
+                  {order.discount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Discount</span>
+                      <span className="font-mono">-₹{order.discount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Shipping</span>
+                    <span className="font-mono">
+                      {order.shipping === 0 ? "FREE" : `₹${order.shipping}`}
+                    </span>
+                  </div>
+                  <div className="flex justify-between font-medium pt-2 border-t border-gray-200">
+                    <span>Total</span>
+                    <span className="font-mono">₹{order.total.toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -193,9 +289,10 @@ export default function TrackOrderPage() {
                 </h3>
 
                 <div className="relative">
-                  {tracking.timeline.map((event, index) => {
+                  {getTimeline(order).map((event, index) => {
                     const Icon = getStatusIcon(event.status);
-                    const isLast = index === tracking.timeline.length - 1;
+                    const timeline = getTimeline(order);
+                    const isLast = index === timeline.length - 1;
 
                     return (
                       <div key={event.id} className="relative flex gap-5">
@@ -264,7 +361,7 @@ export default function TrackOrderPage() {
                                     : "text-gray-400"
                                 }`}
                               >
-                                {event.date} • {event.time}
+                                {event.date} {event.time && `• ${event.time}`}
                               </p>
                               <p
                                 className={`font-mono text-xs ${
@@ -296,8 +393,38 @@ export default function TrackOrderPage() {
                     Delivery Address
                   </span>
                   <p className="font-sans text-sm text-gray-700">
-                    {tracking.shippingAddress}
+                    {order.customer.firstName} {order.customer.lastName}
                   </p>
+                  <p className="font-sans text-sm text-gray-700">
+                    {order.shippingAddress.address}, {order.shippingAddress.city}
+                  </p>
+                  <p className="font-sans text-sm text-gray-700">
+                    {order.shippingAddress.state} - {order.shippingAddress.pincode}
+                  </p>
+                  <p className="font-mono text-xs text-gray-500 mt-2">
+                    {order.customer.phone} • {order.customer.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Order Date */}
+          <section className="py-4 border-t border-gray-200">
+            <div className="container mx-auto px-4 md:px-8">
+              <div className="max-w-2xl mx-auto flex items-center gap-4">
+                <Clock className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <div>
+                  <span className="font-mono text-xs text-gray-400 uppercase tracking-widest">
+                    Order placed on {new Date(order.orderDate).toLocaleDateString("en-IN", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
+                  </span>
                 </div>
               </div>
             </div>
